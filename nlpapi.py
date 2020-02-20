@@ -22,11 +22,11 @@ class GoogleNLPService:
             5: "WORK_OF_ART",
             6: "CONSUMER_GOOD",
             7: "OTHER",
-            8: "PHONE_NUMBER",
-            9: "ADDRESS",
-            10: "DATE",
-            11: "NUMBER",
-            12: "PRICE",
+            9: "PHONE_NUMBER",
+            10: "ADDRESS",
+            11: "DATE",
+            12: "NUMBER",
+            13: "PRICE",
         }
 
     def document_from_text(self, text):
@@ -54,7 +54,10 @@ class GoogleNLPService:
 
     def extract_entities(self, entities):
         words = []
+        print(entities)
         for entity in entities:
+            print(entity.name)
+            print(entity.type)
             word = {
                 "name": entity.name,
                 "type": self.ENTITY_ENUM_TYPE[entity.type],
@@ -65,12 +68,16 @@ class GoogleNLPService:
 
 
 if __name__ == "__main__":
-    nlp = GoogleNLPService()
-    with open("./subtitle/0adba949ed305baf9499481b3fe591b59da3744f.json", "r") as f:
-        subtitle = json.loads(f.read())
-        print(subtitle['text'])
-        # analyze_sentiment(subtitle['text'])
-        entities = nlp.analyze_entities(subtitle['text'])
-        extracted_entities = nlp.extract_entities(entities.entities)
-        subtitle['entities'] = extracted_entities
-        print(subtitle)
+    print(enums.Entity.Type.EVENT, enums.Entity.Type.EVENT.value)
+    print(enums.Entity.Type.ADDRESS, enums.Entity.Type.ADDRESS.value)
+    print(enums.Entity.Type.CONSUMER_GOOD, enums.Entity.Type.CONSUMER_GOOD.value)
+    print(enums.Entity.Type.DATE, enums.Entity.Type.DATE.value)
+    print(enums.Entity.Type.LOCATION, enums.Entity.Type.LOCATION.value)
+    print(enums.Entity.Type.NUMBER, enums.Entity.Type.NUMBER.value)
+    print(enums.Entity.Type.ORGANIZATION, enums.Entity.Type.ORGANIZATION.value)
+    print(enums.Entity.Type.OTHER, enums.Entity.Type.OTHER.value)
+    print(enums.Entity.Type.PERSON, enums.Entity.Type.PERSON.value)
+    print(enums.Entity.Type.PHONE_NUMBER, enums.Entity.Type.PHONE_NUMBER.value)
+    print(enums.Entity.Type.PRICE, enums.Entity.Type.PRICE.value)
+    print(enums.Entity.Type.UNKNOWN, enums.Entity.Type.UNKNOWN.value)
+    print(enums.Entity.Type.WORK_OF_ART, enums.Entity.Type.WORK_OF_ART.value)
