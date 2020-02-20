@@ -54,10 +54,7 @@ class GoogleNLPService:
 
     def extract_entities(self, entities):
         words = []
-        print(entities)
         for entity in entities:
-            print(entity.name)
-            print(entity.type)
             word = {
                 "name": entity.name,
                 "type": self.ENTITY_ENUM_TYPE[entity.type],

@@ -7,7 +7,6 @@ def main():
     nlp = GoogleNLPService()
     for object in objects:
         print(object['text'])
-        # analyze_sentiment(subtitle['text'])
         entities = nlp.analyze_entities(object['text'])
         extracted_entities = nlp.extract_entities(entities.entities)
         object['entities'] = extracted_entities
