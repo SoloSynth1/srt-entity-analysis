@@ -71,5 +71,6 @@ if __name__ == "__main__":
         print(subtitle['text'])
         # analyze_sentiment(subtitle['text'])
         entities = nlp.analyze_entities(subtitle['text'])
-        print(entities)
-        print(nlp.extract_entities(entities.entities))
+        extracted_entities = nlp.extract_entities(entities.entities)
+        subtitle['entities'] = extracted_entities
+        print(subtitle)

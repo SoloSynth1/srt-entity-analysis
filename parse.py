@@ -43,16 +43,16 @@ def parse_all_files():
     return objects
 
 
-def dump_output(objects):
-    for object in objects:
-        json_str = json.dumps(object)
-        sha1sum = hashlib.sha1(json_str.encode("utf-8")).hexdigest()
-        with open(os.path.join(OUTPUT_PATH, "{}.json".format(sha1sum)), 'w') as f:
-            f.write(json_str)
+def dump_output(object):
+    json_str = json.dumps(object)
+    sha1sum = hashlib.sha1(json_str.encode("utf-8")).hexdigest()
+    with open(os.path.join(OUTPUT_PATH, "{}.json".format(sha1sum)), 'w') as f:
+        f.write(json_str)
 
 
 if __name__ == "__main__":
     objects = parse_all_files()
     for object in objects:
         print(object)
-    dump_output(objects)
+    for object in objects:
+        dump_output(object)
