@@ -1,48 +1,75 @@
 import json
-# Imports the Google Cloud client library
+
 from google.cloud import language
 from google.cloud.language import enums
 from google.cloud.language import types
 from google.oauth2 import service_account
 
-SERVICE_ACCOUNT_FILE = './key/credentials.json'
 
-credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
+class GoogleNLPService:
 
-# Instantiates a client
-client = language.LanguageServiceClient(credentials=credentials)
+    def __init__(self, service_account_file='./key/credentials.json'):
+        self.service_account_file = service_account_file
+        self.credentials = service_account.Credentials.from_service_account_file(self.service_account_file)
+        self.client = language.LanguageServiceClient(credentials=self.credentials)
+        self.ENCODING_TYPE = enums.EncodingType.UTF8
+        self.ENTITY_ENUM_TYPE = {
+            0: "UNKNOWN",
+            1: "PERSON",
+            2: "LOCATION",
+            3: "ORGANIZATION",
+            4: "EVENT",
+            5: "WORK_OF_ART",
+            6: "CONSUMER_GOOD",
+            7: "OTHER",
+            8: "PHONE_NUMBER",
+            9: "ADDRESS",
+            10: "DATE",
+            11: "NUMBER",
+            12: "PRICE",
+        }
 
+    def document_from_text(self, text):
+        return types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
-def analyze_sentiment(text):
-    document = types.Document(
-        content=text,
-        type=enums.Document.Type.PLAIN_TEXT)
+    def analyze_sentiment(self, text):
+        document = self.document_from_text(text)
+        response = self.client.analyze_sentiment(document=document, encoding_type=self.ENCODING_TYPE)
+        return response
 
-    # Detects the sentiment of the text
-    response = client.analyze_sentiment(document=document)
-    print(response)
-    sentiment = response.document_sentiment
+    def analyze_syntax(self, text):
+        document = self.document_from_text(text)
+        response = self.client.analyze_syntax(document, encoding_type=self.ENCODING_TYPE)
+        return response
 
-    print('Text: {}'.format(text))
-    print('Sentiment Score: {}, Magnitude: {}'.format(sentiment.score, sentiment.magnitude))
+    def analyze_entities(self, text):
+        document = self.document_from_text(text)
+        response = self.client.analyze_entities(document, encoding_type=self.ENCODING_TYPE)
+        return response
 
+    def analyze_entity_sentiment(self, text):
+        document = self.document_from_text(text)
+        response = self.client.analyze_entity_sentiment(document, encoding_type=self.ENCODING_TYPE)
+        return response
 
-def analyze_syntax(text):
-    document = types.Document(
-        content=text,
-        type=enums.Document.Type.PLAIN_TEXT)
-
-    # Detects the sentiment of the text
-    encoding_type = enums.EncodingType.UTF8
-
-    response = client.analyze_syntax(document, encoding_type=encoding_type)
-    print(response)
+    def extract_entities(self, entities):
+        words = []
+        for entity in entities:
+            word = {
+                "name": entity.name,
+                "type": self.ENTITY_ENUM_TYPE[entity.type],
+                "salience": entity.salience,
+            }
+            words.append(word)
+        return words
 
 
 if __name__ == "__main__":
-    # with open("./subtitle/0c82ac666286fe7d62712b8bfa5fc8a284a6066d.json", "r") as f:
-    #     subtitle = json.loads(f.read())
-    #     # analyze_sentiment(subtitle['text'])
-    #     analyze_syntax(subtitle['text'])
-    byte_str = b'\357\274\210\346\211\200\346\234\211\347\227\205\346\210\277\350\254\235\347\265\225\346\216\242\350\250\252\357\274\214\345\244\232\350\254\235\345\220\210\344\275\234\357\274\211'
-    print(byte_str.decode('utf-8'))
+    nlp = GoogleNLPService()
+    with open("./subtitle/0adba949ed305baf9499481b3fe591b59da3744f.json", "r") as f:
+        subtitle = json.loads(f.read())
+        print(subtitle['text'])
+        # analyze_sentiment(subtitle['text'])
+        entities = nlp.analyze_entities(subtitle['text'])
+        print(entities)
+        print(nlp.extract_entities(entities.entities))
